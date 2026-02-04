@@ -17,17 +17,17 @@ Statement:
 ;
 
 VariableDeclaration:
-	"var" name=ID "=" value=INT
+	"var" name=ID "=" value=Expression
 ;
 
 LoopStatement:
-	count = IntExpression "times" "do"
+	count = Expression "times" "do"
 	  statements += Statement+
 	"end"
 ;
 
 MoveStatement:
-	command = MoveCommand "(" steps = IntExpression ")"
+	command = MoveCommand "(" steps = Expression ")"
 ;
 
 enum MoveCommand:
@@ -42,8 +42,25 @@ enum TurnCommand:
 	left | right
 ;
 
-IntExpression:
-	val = INT |
+Expression:
+	Multiplication ({Addition.left=current} "+" right=Multiplication)*
+;
+
+Multiplication returns Expression:
+	Primary ({Multiplication.left=current} "*" right=Primary)*
+;
+
+Primary returns Expression:
+	NumberLiteral |
+	VariableReference |
+	"(" Expression ")"
+;
+
+NumberLiteral:
+	val = INT
+;
+
+VariableReference:
 	var = [VariableDeclaration]
 ;
 
