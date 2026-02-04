@@ -30,24 +30,13 @@ MoveStatement:
 	command = MoveCommand "(" steps = Expression ")"
 ;
 
-enum MoveCommand:
-	forward | backward
-;
-
-TurnStatement:
-	"turn" command = TurnCommand "by" degrees = REAL "degrees"
-;
-
-enum TurnCommand:
-	left | right
-;
 
 Expression:
-	Multiplication ({Addition.left=current} "+" right=Multiplication)*
+	Multiplication ({Addition.left=current} ("+" right+=Multiplication)+)?
 ;
 
 Multiplication returns Expression:
-	Primary ({Multiplication.left=current} "*" right=Primary)*
+	Primary ({Multiplication.left=current} ("*" right+=Primary)+)?
 ;
 
 Primary returns Expression:
